@@ -57,7 +57,7 @@ BUILD_ROOT=~/terra-package-build
 # Note: When using a custom path the versions in the respective *_VER
 # variables below set the per-package installation directories and
 # form the download URL's.
-INSTALL_PATH=
+INSTALL_PATH=/opt/terra-package
 
 # Software download URL's, modify these for the latest versions
 
@@ -99,12 +99,17 @@ if test ${INSTALL_PATH}; then
     if test ! -d ${INSTALL_PATH}; then
 	sudo mkdir -v ${INSTALL_PATH}
     fi
+else
+    echo "INSTALL_PATH is not set, using /usr/local."
 fi
 
 #check build directory is set
-if test "x${BUILD_ROOT}" = "x"; then
-    echo "BUILD_ROOT is not set. exiting"
-    exit
+if test ${BUILD_ROOT}; then
+    if test ! -d ${BUILD_ROOT}; then
+	mkdir -v ${BUILD_ROOT}
+    fi
+else
+    echo "BUILD_ROOT is not set"
 fi
 
 # setup and download
@@ -196,15 +201,15 @@ sudo make install
 R_SHELL="/opt/R/4.0.2/bin/R"
 
 if test ${INSTALL_PATH}; then
-    # install within an R sessions
-    echo "install.packages(\"terra\", configure.args=c(\"--with-gdal-config=${GDAL_PREFIX}/bin/gdal-config\", \"--with-proj-data=${PROJ_PREFIX}/share/proj/\", \"--with-sqlite3-lib=${SQLITE_PREFIX}/lib/\", \"--with-proj-include=${PROJ_PREFIX}/include/\", \"--with-proj-lib=${PROJ_PREFIX}/lib64/\", \"--with-proj-share=${PROJ_PREFIX}/share/\"))"
-    # install from command line R
-    echo "${R_SHELL} CMD INSTALL configure.args=\"--with-gdal-config=${GDAL_PREFIX}/bin/gdal-config --with-proj-data=${PROJ_PREFIX}/share/proj/ --with-sqlite3-lib=${SQLITE_PREFIX}/lib/ --with-proj-include=${PROJ_PREFIX}/include/ --with-proj-lib=${PROJ_PREFIX}/lib64/ --with-proj-share=${PROJ_PREFIX}/share/\" terra_1.6-17.tar.gz"
+    echo "# install within an R sessions"
+    echo "install.packages(\"terra\", configure.args=c(\"--with-gdal-config=${GDAL_PREFIX}/bin/gdal-config\", \"--with-geos-config=${GEOS_PREFIX}/bin/geos-config\", \"--with-proj-data=${PROJ_PREFIX}/share/proj/\", \"--with-sqlite3-lib=${SQLITE_PREFIX}/lib/\", \"--with-proj-include=${PROJ_PREFIX}/include/\", \"--with-proj-lib=${PROJ_PREFIX}/lib64/\", \"--with-proj-share=${PROJ_PREFIX}/share/\"))"
+    echo "# install from command line R"
+    echo "${R_SHELL} CMD INSTALL configure.args=\"--with-gdal-config=${GDAL_PREFIX}/bin/gdal-config --with-geos-config=${GEOS_PREFIX}/bin/geos-config --with-proj-data=${PROJ_PREFIX}/share/proj/ --with-sqlite3-lib=${SQLITE_PREFIX}/lib/ --with-proj-include=${PROJ_PREFIX}/include/ --with-proj-lib=${PROJ_PREFIX}/lib64/ --with-proj-share=${PROJ_PREFIX}/share/\" terra_1.6-17.tar.gz"
 else
-    # install within an R sessions
-    echo "install.packages(\"terra\", configure.args = c(\"--with-gdal-config=/usr/local/bin/gdal-config\", \"--with-proj-data=/usr/local/share/proj/\", \"--with-sqlite3-lib=/usr/local/lib/\", \"--with-proj-include=/usr/local/include/\", \"--with-proj-lib=/usr/local/lib64/\", \"--with-proj-share=/usr/local/share/\"))"
-    # install from command line R
-    echo "${R_SHELL} CMD INSTALL --configure-args=\"--with-gdal-config=/usr/local/bin/gdal-config --with-proj-data=/usr/local/share/proj/ --with-sqlite3-lib=/usr/local/lib/ --with-proj-include=/usr/local/include/ --with-proj-lib=/usr/local/lib64/ --with-proj-share=/usr/local/share/\" terra_1.6-17.tar.gz"
+    echo "# install within an R sessions"
+    echo "install.packages(\"terra\", configure.args = c(\"--with-gdal-config=/usr/local/bin/gdal-config\", \"--with-geos-config=/usr/local/bin/geos-config\", \"--with-proj-data=/usr/local/share/proj/\", \"--with-sqlite3-lib=/usr/local/lib/\", \"--with-proj-include=/usr/local/include/\", \"--with-proj-lib=/usr/local/lib64/\", \"--with-proj-share=/usr/local/share/\"))"
+    echo "# install from command line R"
+    echo "${R_SHELL} CMD INSTALL --configure-args=\"--with-gdal-config=/usr/local/bin/gdal-config --with-geos-config=/usr/local/bin/geos-config --with-proj-data=/usr/local/share/proj/ --with-sqlite3-lib=/usr/local/lib/ --with-proj-include=/usr/local/include/ --with-proj-lib=/usr/local/lib64/ --with-proj-share=/usr/local/share/\" terra_1.6-17.tar.gz"
 fi
 
 # R > library(terra)
