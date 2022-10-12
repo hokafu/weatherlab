@@ -1,7 +1,7 @@
 #############################################################
 # Build and install "terra: Spatial Data Analysis"
 # (https://rspatial.org/terra/) and dependencies from source
-############################################################# 
+#############################################################
 
 #############################################################
 # Disclaimer
@@ -24,7 +24,7 @@
 #
 # Naming of particular products or brands should not be seen as
 # endorsements.
-# 
+#
 #############################################################
 
 #############################################################
@@ -37,16 +37,16 @@
 # * Set the options in the configuration section below
 # * Make this file executable chmod +x build-terra-R-package.sh
 # * Run ./build-terra-R-package.sh|tee ${SOURCE_DIR}/terra-build-$(date +%Y%m%d%H%m%S).log
-# * Set the PATH,LD_LIBRARY_PATH output 
+# * Set the PATH,LD_LIBRARY_PATH output
 # * Install the terra package with example R install commands
 #
 ####
 #
 # BUILD_ROOT is the directory in which the packages are downloaded and
 # built e.g. BUILD_ROOT=~/terra-build. Uses ~2.6G space
-#  
 #
-# terra-build/ 
+#
+# terra-build/
 # ├── download
 # │   ├── cmake-3.24.2.tar.gz
 # │   ├── gdal-3.5.2.tar.gz
@@ -65,7 +65,7 @@
 # Leave this empty to default to /usr/local or set a custom
 # installation path to INSTALL_PATH with
 # e.g. INSTALL_PATH=/opt/terra-install. Uses ~763M space.
-# 
+#
 #
 # /opt/terra-install/
 # ├── cmake-3.24.2
@@ -93,7 +93,7 @@ if ! rpm -q devtoolset-7 > /dev/null; then
     sudo yum install devtoolset-7
 fi
 
-# verify gcc 
+# verify gcc
 if test -f /opt/rh/devtoolset-7/enable; then
    source scl_source enable devtoolset-7
 fi
@@ -113,7 +113,7 @@ INSTALL_PATH=
 # Software download URL's, modify these for the latest versions
 
 ## https://cmake.org/download/
-CMAKE_VER="cmake-3.24.2" 
+CMAKE_VER="cmake-3.24.2"
 CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v3.24.2/${CMAKE_VER}.tar.gz"
 
 ## https://www.sqlite.org/download.html
@@ -237,7 +237,7 @@ if test ${INSTALL_PATH}; then
     ./configure --prefix="${GDAL_PREFIX}" --with-proj="${PROJ_PREFIX}"
 else
     ./configure --with-proj="${PROJ_PREFIX}"
-fi 
+fi
 make
 sudo make install
 
@@ -251,7 +251,7 @@ if test ${INSTALL_PATH}; then
     ./configure --prefix="${GEOS_PREFIX}"
 else
     ./configure
-fi 
+fi
 make
 sudo make install
 
@@ -270,21 +270,21 @@ if test ${INSTALL_PATH}; then
     #############################################################
     # Unless INSTALL_PATH is /usr/local, these need to be exported prior
     # to running R or R CMD INSTALL
-    
+
     echo
     #PATH - required!
     echo "export PATH=${GDAL_PREFIX}/bin/:${GEOS_PREFIX}/bin:${SQLITE_PREFIX}/bin:${PROJ_PREFIX}/bin:\$PATH"
-    
+
     #LD_LIBRARY_PATH - required!
     echo "export LD_LIBRARY_PATH=${PROJ_PREFIX}/lib64:${GDAL_PREFIX}/lib:${GEOS_PREFIX}/lib64:${SQLITE_PREFIX}/lib:\$LD_LIBRARY_PATH"
-    
+
     #LDFLAGS - required!
     echo "export LDFLAGS=\"-L${PROJ_PREFIX}/lib64 -lproj -L${SQLITE_PREFIX}/lib -lsqlite3\""
-    
+
     #CPPFLAGS - required!
     echo "export CPPFLAGS=\"-I${PROJ_PREFIX}/include -I${SQLITE_PREFIX}/include\""
     echo
-    
+
     echo "# install within an R sessions"
     echo install.packages(\"terra\", configure.args=c(\"--with-gdal-config=${GDAL_PREFIX}/bin/gdal-config\", \"--with-geos-config=${GEOS_PREFIX}/bin/geos-config\", \"--with-proj-data=${PROJ_PREFIX}/share/proj/\", \"--with-sqlite3-lib=${SQLITE_PREFIX}/lib/\", \"--with-proj-include=${PROJ_PREFIX}/include/\", \"--with-proj-lib=${PROJ_PREFIX}/lib64/\", \"--with-proj-share=${PROJ_PREFIX}/share/\"))"
     echo "install.packages("terra", configure.args=c("--with-gdal-config=${GDAL_PREFIX}/bin/gdal-config", "--with-geos-config=${GEOS_PREFIX}/bin/geos-config", "--with-proj-data=${PROJ_PREFIX}/share/proj/", "--with-sqlite3-lib=${SQLITE_PREFIX}/lib/", "--with-proj-include=${PROJ_PREFIX}/include/", "--with-proj-lib=${PROJ_PREFIX}/lib64/", "--with-proj-share=${PROJ_PREFIX}/share/"))"
@@ -373,7 +373,7 @@ exit 1
 # Resolution:
 
 # ?
-# add proj to LD_LIBRARY_PATH LDFLAGS 
+# add proj to LD_LIBRARY_PATH LDFLAGS
 # or
 # add sqlite3 to PATH
 # symlink libs from /usr/local
