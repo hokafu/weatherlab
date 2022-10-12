@@ -48,12 +48,12 @@
 #
 # terra-build/
 # ├── download
-# │   ├── cmake-3.24.2.tar.gz
-# │   ├── gdal-3.5.2.tar.gz
-# │   ├── geos-3.11.0.tar.bz2
-# │   ├── proj-9.1.0.tar.gz
-# │   ├── sqlite-autoconf-3390400.tar.gz
-# │   └── terra_1.6-7.tar.gz
+# │   ├── cmake-3.24.2.tar.gz
+# │   ├── gdal-3.5.2.tar.gz
+# │   ├── geos-3.11.0.tar.bz2
+# │   ├── proj-9.1.0.tar.gz
+# │   ├── sqlite-autoconf-3390400.tar.gz
+# │   └── terra_1.6-7.tar.gz
 # └── source
 #     ├── build-env
 #     ├── cmake-3.24.2
@@ -80,22 +80,26 @@
 #############################################################
 # Compiler options
 
-# Build system/compiler
-# CentOS Linux release 7.9.2009 (Core)
-# gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5) (devtoolset-7)
+if test -f /etc/redhat-release ; then
 
-#install newer gcc with devtoolset
-if ! rpm -q centos-release-scl > /dev/null ; then
-    sudo yum install centos-release-scl
-fi
+    # Build system/compiler
+    # CentOS Linux release 7.9.2009 (Core)
+    # gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5) (devtoolset-7)
 
-if ! rpm -q devtoolset-7 > /dev/null; then
-    sudo yum install devtoolset-7
-fi
+    #install newer gcc with devtoolset on rhel/centos/rocky
+    if
+	if ! rpm -q centos-release-scl > /dev/null ; then
+	    sudo yum install centos-release-scl
+	fi
 
-# verify gcc
-if test -f /opt/rh/devtoolset-7/enable; then
-   source scl_source enable devtoolset-7
+	if ! rpm -q devtoolset-7 > /dev/null; then
+	    sudo yum install devtoolset-7
+	fi
+
+	# verify gcc
+	if test -f /opt/rh/devtoolset-7/enable; then
+	    source scl_source enable devtoolset-7
+	fi
 fi
 
 which gcc
@@ -376,6 +380,6 @@ exit 1
 # add proj to LD_LIBRARY_PATH LDFLAGS
 # or
 # add sqlite3 to PATH
-# symlink libs from /usr/local
+# symlink libs to /usr/local
 # ln -s  /opt/terra/proj-9.1.0/lib64/* /usr/local/lib64/
 # ln -s  /opt/terra/proj-9.1.0/include/* /usr/local/include/
