@@ -1,6 +1,7 @@
 #!/bin/bash -x
 #############################################################
-# Build and install "terra: Spatial Data Analysis"# (https://rspatial.org/terra/) and dependencies from source
+# Build and install "terra: Spatial Data Analysis"
+# (https://rspatial.org/terra/) and dependencies from source
 #############################################################
 
 #############################################################
@@ -81,9 +82,7 @@
 # Build system/compiler options
 
 if test -f /etc/redhat-release ; then
-
-    #install newer gcc with devtoolset on rhel/centos/rocky
-    
+    #install newer gcc with devtoolset on rhel/centos/rocky    
     if ! rpm -q centos-release-scl > /dev/null ; then
 	sudo yum install centos-release-scl
     fi
