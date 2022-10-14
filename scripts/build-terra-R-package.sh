@@ -78,28 +78,26 @@
 # names in INSTALL_PATH so determine the install PREFIX paths
 
 #############################################################
-# Compiler options
+# Build system/compiler options
 
-# Build system/compiler
+if test -f /etc/redhat-release ; then
 
-if test -f /etc/redhat-release; then
-    # CentOS Linux release 7.9.2009 (Core)
-    # gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5) (devtoolset-7)
+    #install newer gcc with devtoolset on rhel/centos/rocky
+    if
+	if ! rpm -q centos-release-scl > /dev/null ; then
+	    sudo yum install centos-release-scl
+	fi
 
-    #install newer gcc with devtoolset
-    if ! rpm -q centos-release-scl > /dev/null ; then
-	sudo yum install centos-release-scl
-    fi
+	if ! rpm -q devtoolset-7 > /dev/null; then
+	    sudo yum install devtoolset-7
+	fi
 
-    if ! rpm -q devtoolset-7 > /dev/null; then
-	sudo yum install devtoolset-7
-    fi
-
-    # verify gcc
-    if test -f /opt/rh/devtoolset-7/enable; then
-	source scl_source enable devtoolset-7
-    fi
+	# verify gcc
+	if test -f /opt/rh/devtoolset-7/enable; then
+	    source scl_source enable devtoolset-7
+	fi
 fi
+
 which gcc
 gcc --version
 
@@ -400,6 +398,6 @@ exit 1
 # add proj to LD_LIBRARY_PATH LDFLAGS
 # or
 # add sqlite3 to PATH
-# symlink libs from /usr/local
+# symlink libs to /usr/local
 # ln -s  /opt/terra/proj-9.1.0/lib64/* /usr/local/lib64/
 # ln -s  /opt/terra/proj-9.1.0/include/* /usr/local/include/
