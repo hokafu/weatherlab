@@ -83,19 +83,19 @@
 if test -f /etc/redhat-release ; then
 
     #install newer gcc with devtoolset on rhel/centos/rocky
-    if
-	if ! rpm -q centos-release-scl > /dev/null ; then
-	    sudo yum install centos-release-scl
-	fi
-
-	if ! rpm -q devtoolset-7 > /dev/null; then
-	    sudo yum install devtoolset-7
-	fi
-
-	# verify gcc
-	if test -f /opt/rh/devtoolset-7/enable; then
-	    source scl_source enable devtoolset-7
-	fi
+    
+    if ! rpm -q centos-release-scl > /dev/null ; then
+	sudo yum install centos-release-scl
+    fi
+    
+    if ! rpm -q devtoolset-7 > /dev/null; then
+	sudo yum install devtoolset-7
+    fi
+    
+    # verify gcc
+    if test -f /opt/rh/devtoolset-7/enable; then
+	source scl_source enable devtoolset-7
+    fi
 fi
 
 which gcc
