@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 #############################################################
 # Build and install "terra: Spatial Data Analysis"# (https://rspatial.org/terra/) and dependencies from source
 #############################################################
