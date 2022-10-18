@@ -82,19 +82,30 @@
 # Build system/compiler options
 
 if test -f /etc/redhat-release ; then
-    #install newer gcc with devtoolset on rhel/centos/rocky    
+
+    DISTRO=RHEL_BASED
+
+    #location where proj libs are installed, lib64 on RHEL
+    PROJ_LIB_DIR=lib64
+
+    #install newer gcc with devtoolset on rhel/centos/rocky
     if ! rpm -q centos-release-scl > /dev/null ; then
 	sudo yum install centos-release-scl
     fi
-    
+
     if ! rpm -q devtoolset-7 > /dev/null; then
 	sudo yum install devtoolset-7
     fi
-    
+
     # verify gcc
     if test -f /opt/rh/devtoolset-7/enable; then
 	source scl_source enable devtoolset-7
     fi
+fi
+
+if test -f /etc/debian_version ; then
+    DISTRO=DEBIAN_BASED
+    PROJ_LIB_DIR=lib
 fi
 
 which gcc
@@ -135,8 +146,8 @@ GEOS_VER="geos-3.11.0"
 GEOS_URL="https://download.osgeo.org/geos/${GEOS_VER}.tar.bz2"
 
 ## https://rspatial.org/terra/
-TERRA_VER="terra_1.6-7"
-TERRA_URL="https://cran.r-project.org/src/contrib/Archive/terra/${TERRA_VER}.tar.gz"
+TERRA_VER="terra_1.6-17"
+TERRA_URL="https://cran.r-project.org/src/contrib/${TERRA_VER}.tar.gz"
 
 # end configuration section
 
@@ -251,7 +262,7 @@ which proj
 proj
 
 # gdal need this to find proj
-export LD_LIBRARY_PATH="${PROJ_PREFIX}/lib64":$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH="${PROJ_PREFIX}/${PROJ_LIB_DIR}":$LD_LIBRARY_PATH
 
 # build gdal
 tar -C ${SOURCE_DIR} -xvzf ${DOWNLOAD_DIR}/gdal-*.tar.gz  && cd ${SOURCE_DIR}/gdal-*
@@ -304,21 +315,21 @@ if test ${INSTALL_PATH}; then
     #PATH - required!
     echo "export PATH=${GDAL_PREFIX}/bin/:${GEOS_PREFIX}/bin:${SQLITE_PREFIX}/bin:${PROJ_PREFIX}/bin:\$PATH"
     #LD_LIBRARY_PATH - required!
-    echo "export LD_LIBRARY_PATH=${PROJ_PREFIX}/lib64:${GDAL_PREFIX}/lib:${GEOS_PREFIX}/lib64:${SQLITE_PREFIX}/lib:\$LD_LIBRARY_PATH"
+    echo "export LD_LIBRARY_PATH=${PROJ_PREFIX}/${PROJ_LIB_DIR}:${GDAL_PREFIX}/lib:${GEOS_PREFIX}/${PROJ_LIB_DIR}:${SQLITE_PREFIX}/lib:\$LD_LIBRARY_PATH"
     #LDFLAGS - required!
-    echo "export LDFLAGS=\"-L${PROJ_PREFIX}/lib64 -lproj -L${SQLITE_PREFIX}/lib -lsqlite3\""
+    echo "export LDFLAGS=\"-L${PROJ_PREFIX}/${PROJ_LIB_DIR} -lproj -L${SQLITE_PREFIX}/lib -lsqlite3\""
     #CPPFLAGS - required!
     echo "export CPPFLAGS=\"-I${PROJ_PREFIX}/include -I${SQLITE_PREFIX}/include\""
     echo
     echo "# install within an R session"
-    echo "install.packages(\"terra\", configure.args=c(\"--with-gdal-config=${GDAL_PREFIX}/bin/gdal-config\", \"--with-geos-config=${GEOS_PREFIX}/bin/geos-config\", \"--with-proj-data=${PROJ_PREFIX}/share/proj\", \"--with-sqlite3-lib=${SQLITE_PREFIX}/lib\", \"--with-proj-include=${PROJ_PREFIX}/include\", \"--with-proj-lib=${PROJ_PREFIX}/lib64\", \"--with-proj-share=${PROJ_PREFIX}/share\"))"
+    echo "install.packages(\"terra\", configure.args=c(\"--with-gdal-config=${GDAL_PREFIX}/bin/gdal-config\", \"--with-geos-config=${GEOS_PREFIX}/bin/geos-config\", \"--with-proj-data=${PROJ_PREFIX}/share/proj\", \"--with-sqlite3-lib=${SQLITE_PREFIX}/lib\", \"--with-proj-include=${PROJ_PREFIX}/include\", \"--with-proj-lib=${PROJ_PREFIX}/${PROJ_LIB_DIR}\", \"--with-proj-share=${PROJ_PREFIX}/share\"))"
     echo "# install from command line R"
-    echo "${R_SHELL} CMD INSTALL --configure-args=\"--with-gdal-config=${GDAL_PREFIX}/bin/gdal-config --with-geos-config=${GEOS_PREFIX}/bin/geos-config --with-proj-data=${PROJ_PREFIX}/share/proj --with-sqlite3-lib=${SQLITE_PREFIX}/lib --with-proj-include=${PROJ_PREFIX}/include --with-proj-lib=${PROJ_PREFIX}/lib64 --with-proj-share=${PROJ_PREFIX}/share\" terra_1.6-17.tar.gz"
+    echo "${R_SHELL} CMD INSTALL --configure-args=\"--with-gdal-config=${GDAL_PREFIX}/bin/gdal-config --with-geos-config=${GEOS_PREFIX}/bin/geos-config --with-proj-data=${PROJ_PREFIX}/share/proj --with-sqlite3-lib=${SQLITE_PREFIX}/lib --with-proj-include=${PROJ_PREFIX}/include --with-proj-lib=${PROJ_PREFIX}/${PROJ_LIB_DIR} --with-proj-share=${PROJ_PREFIX}/share\" ${TERRA_VER}.tar.gz"
 else
     echo "# install within an R sessions"
-    echo "install.packages(\"terra\", configure.args = c(\"--with-gdal-config=/usr/local/bin/gdal-config\", \"--with-geos-config=/usr/local/bin/geos-config\", \"--with-proj-data=/usr/local/share/proj\", \"--with-sqlite3-lib=/usr/local/lib\", \"--with-proj-include=/usr/local/include\", \"--with-proj-lib=/usr/local/lib64\", \"--with-proj-share=/usr/local/share\"))"
+    echo "install.packages(\"terra\", configure.args = c(\"--with-gdal-config=/usr/local/bin/gdal-config\", \"--with-geos-config=/usr/local/bin/geos-config\", \"--with-proj-data=/usr/local/share/proj\", \"--with-sqlite3-lib=/usr/local/lib\", \"--with-proj-include=/usr/local/include\", \"--with-proj-lib=/usr/local/${PROJ_LIB_DIR}\", \"--with-proj-share=/usr/local/share\"))"
     echo "# install from command line R"
-    echo "${R_SHELL} CMD INSTALL --configure-args=\"--with-gdal-config=/usr/local/bin/gdal-config --with-geos1-config=/usr/local/bin/geos-config --with-proj-data=/usr/local/share/proj --with-sqlite3-lib=/usr/local/lib --with-proj-include=/usr/local/include --with-proj-lib=/usr/local/lib64 --with-proj-share=/usr/local/share\" terra_1.6-17.tar.gz"
+    echo "${R_SHELL} CMD INSTALL --configure-args=\"--with-gdal-config=/usr/local/bin/gdal-config --with-geos1-config=/usr/local/bin/geos-config --with-proj-data=/usr/local/share/proj --with-sqlite3-lib=/usr/local/lib --with-proj-include=/usr/local/include --with-proj-lib=/usr/local/${PROJ_LIB_DIR} --with-proj-share=/usr/local/share\" ${TERRA_VER}.tar.gz"
 
 fi
 
