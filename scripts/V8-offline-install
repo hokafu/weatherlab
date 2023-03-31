@@ -1,21 +1,26 @@
-# Method to install the V8 R package (https://github.com/jeroen/v8) 
-# in an "offline" environment. A server with internet is need to obtain 
-# the packages and helper scripts.
-# This is interactive, review each command prior to running it 
- 
-#######################################################
-#### From a server with internet access
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Method to install the V8 R package (See https://github.com/jeroen/v8) #
+# in an "offline" environment. A server with internet is used to obtain #
+# the packages and helper scripts. This is "process" not a script since # 
+# commands need to run on different "online" and "offline" servers. :^) #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+########################################################
+# From a server with internet access
+########################################################
+# change the version as needed
 wget https://cran.r-project.org/src/contrib/V8_4.2.2.tar.gz
 
-#this script will find correct v8 libs for the environment
-#copy and run this on the machine where R is installed!!!
-wget http://jeroen.github.io/V8/get-v8-linux.sh
+# Copy and run this on the "offline" machine where R is installed! 
+# It will fail to download but show the correct lib package URL
 bash -x  get-v8-linux.sh| grep curl
 
 # change the package URL below to the one specied in the curl from get-v8-linux.sh 
 wget  https://github.com/jeroen/V8/releases/download/v3.6.0/v8-6.8.275.32-gcc-4.8.tar.gz -O libv8.tar.gz
+
 ########################################################
- 
+# on the "offline" server
+########################################################
 mkdir /tmp/buildv8
 cd /tmp/buildv8
 # rsync/copy V8_4.2.2.tar.gz and libv8.tar.gz to /tmp/buildv8
@@ -29,16 +34,18 @@ tar xvzf libv8.tar.gz
 mv v8 .deps
 rm libv8.tar.gz
 
+# override the package LIBS and CFLAGS
 cd /tmp/buildv8/V8
 export V8_PKG_CFLAGS="-I${PWD}/.deps/include"
 export V8_PKG_LIBS="-L${PWD}/.deps/lib -lv8_monolith"
 echo $V8_PKG_CFLAGS
 echo $V8_PKG_LIBS
 cd /tmp/buildv8/ 
+
 #install to R, adding any missing package dependencies (Rcpp,jsonlite,etc.)
 export R_VERSION=4.1.2
 sudo /opt/R/${R_VERSION}/bin/R CMD INSTALL V8
+
 #confirm 
 # /opt/R/${R_VERSION}/bin/R
 # R > library(V8)
-
