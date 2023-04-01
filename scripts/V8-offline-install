@@ -1,26 +1,56 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Method to install the V8 R package (See https://github.com/jeroen/v8) #
-# in an "offline" environment. A server with internet is used to obtain #
-# the packages and helper scripts. This is "process" not a script since # 
-# commands need to run on different "online" and "offline" servers. :^) #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#############################################################
+# Install the V8 R package (https://github.com/jeroen/v8) 
+# in an "offline" environment.
+#############################################################
 
-########################################################
+#############################################################
+# Disclaimer
+#############################################################
+#
+# This is provided as-is without support and may not work due to
+# differences on your system.
+#
+# No liability for the contents of this documents can be accepted. Use
+# the concepts, examples and other content at your own risk. There may
+# be errors and inaccuracies, that may of course be damaging to your
+# system. Although this is highly unlikely, you should proceed with
+# caution. The author does not accept any responsibility for any
+# damage incurred.
+#
+# All copyrights are held by their respective owners, unless
+# specifically noted otherwise. Use of a term in this document should
+# not be regarded as affecting the validity of any trademark or
+# service mark.
+#
+# Naming of particular products or brands should not be seen as
+# endorsements.
+# 
+#############################################################
+
+#############################################################
+# README
+#############################################################
+# A server with internet access is used to obtain required
+# the packages and helper scripts, which are copied over an
+# offline server. This is "process" not a script since 
+# commands need to run on different hosts.
+
+#############################################################
 # From a server with internet access
-########################################################
+#############################################################
 # change the version as needed
 wget https://cran.r-project.org/src/contrib/V8_4.2.2.tar.gz
 
 # Copy and run this on the "offline" machine where R is installed! 
 # It will fail to download but show the correct lib package URL
-bash -x  get-v8-linux.sh| grep curl
+bash -x get-v8-linux.sh | less
 
-# change the package URL below to the one specied in the curl from get-v8-linux.sh 
+# change the package URL below to the one specified in the curl from get-v8-linux.sh above
 wget  https://github.com/jeroen/V8/releases/download/v3.6.0/v8-6.8.275.32-gcc-4.8.tar.gz -O libv8.tar.gz
 
-########################################################
+#############################################################
 # on the "offline" server
-########################################################
+#############################################################
 mkdir /tmp/buildv8
 cd /tmp/buildv8
 # rsync/copy V8_4.2.2.tar.gz and libv8.tar.gz to /tmp/buildv8
