@@ -42,11 +42,12 @@
 wget https://cran.r-project.org/src/contrib/V8_4.2.2.tar.gz
 
 # Copy and run this on the "offline" machine where R is installed! 
-# It will fail to download but show the correct lib package URL
+# It will fail to download but show the correct lib package, such as
+# URL=https://github.com/jeroen/V8/releases/download/
 bash -x get-v8-linux.sh | less
 
-# change the package URL below to the one specified in the curl from get-v8-linux.sh above
-wget  https://github.com/jeroen/V8/releases/download/v3.6.0/v8-6.8.275.32-gcc-4.8.tar.gz -O libv8.tar.gz
+# change the package URL below to the one specified URL above
+wget https://github.com/jeroen/V8/releases/download/v3.6.0/v8-6.8.275.32-gcc-4.8.tar.gz -O libv8.tar.gz
 
 #############################################################
 # on the "offline" server
@@ -72,10 +73,10 @@ echo $V8_PKG_CFLAGS
 echo $V8_PKG_LIBS
 cd /tmp/buildv8/ 
 
-#install to R, adding any missing package dependencies (Rcpp,jsonlite,etc.)
+# install to R, adding any missing package dependencies (Rcpp,jsonlite,etc.)
 export R_VERSION=4.1.2
 sudo /opt/R/${R_VERSION}/bin/R CMD INSTALL V8
 
-#confirm 
+# confirm it loads
 # /opt/R/${R_VERSION}/bin/R
 # R > library(V8)
