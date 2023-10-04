@@ -1,4 +1,4 @@
-#
+# build-df-R-package.sh v1.1
 # Build and install the "Simple Features for R" package
 # (https://github.com/r-spatial/sf) and dependencies from source
 # 
@@ -31,54 +31,52 @@
 # CentOS Linux release 7.9.2009 (Core)
 # gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
 
-# OS setup
-HN=
-hostname $HN
-echo $HN > /etc/hostname
-cat /etc/hostname
-reboot
+## OS setup
+# HN=
+# hostname $HN
+# echo $HN > /etc/hostname
+# cat /etc/hostname
+# reboot
 
-# Redhat Enterprise Linux 7 Subscription
-subscription-manager register
-subscription-manager attach
+## Redhat Enterprise Linux 7 Subscription
+# subscription-manager register
+# subscription-manager attach
 
-# Redhat Enterprise Linux 7 Build R
-sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-sudo subscription-manager repos --enable "rhel-*-optional-rpms"
-sudo subscription-manager repos --disable rhel-7-server-e4s-optional-rpms
-sudo subscription-manager repos --disable rhel-7-server-eus-optional-rpm
-sudo yum-builddep R -y
-
-export R_VERSION=4.0.2
-curl -O https://cdn.rstudio.com/r/centos-7/pkgs/R-${R_VERSION}-1-1.x86_64.rpm
-sudo yum install R-${R_VERSION}-1-1.x86_64.rpm
+## Redhat Enterprise Linux 7 Build R
+# sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+# sudo subscription-manager repos --enable "rhel-*-optional-rpms"
+# sudo subscription-manager repos --disable rhel-7-server-e4s-optional-rpms
+# sudo subscription-manager repos --disable rhel-7-server-eus-optional-rpm
+# sudo yum-builddep R -y
+# export R_VERSION=4.0.2
+# curl -O https://cdn.rstudio.com/r/centos-7/pkgs/R-${R_VERSION}-1-1.x86_64.rpm
+# sudo yum install R-${R_VERSION}-1-1.x86_64.rpm
 
 #install newer gcc with devtoolset
-if ! rpm -q centos-release-scl > /dev/null ; then
-    sudo yum install centos-release-scl
-fi
+#if ! rpm -q centos-release-scl > /dev/null ; then
+#    sudo yum install centos-release-scl
+#fi
 
-#openssl for cmake
-sudo yum install openssl-devel
+## openssl for cmake
+# sudo yum install openssl-devel
 
-#needed for units
-sudo yum install udunits2-devel
+# #needed for units
+# sudo yum install udunits2-devel
 
-# Redhat Enterprise Linux 7 devtoolset
-subscription-manager list --available
-subscription-manager list --available | grep "Pool ID:"
-POOLID=subscription-manager list --available | awk '/Pool ID:/{ print $NF}'
-subscription-manager attach --pool=$POOLID
-subscription-manager repos --list | grep devtools
-subscription-manager repos --enable rhel-7-server-devtools-rpms
+## Redhat Enterprise Linux 7 devtoolset
+# subscription-manager list --available
+# subscription-manager list --available | grep "Pool ID:"
+# POOLID=subscription-manager list --available | awk '/Pool ID:/{ print $NF}'
+# subscription-manager attach --pool=$POOLID
+# subscription-manager repos --list | grep devtools
+# subscription-manager repos --enable rhel-7-server-devtools-rpms
 
-if ! rpm -q devtoolset-7 > /dev/null; then
-    sudo yum install devtoolset-7
-fi
+# if ! rpm -q devtoolset-7 > /dev/null; then
+#     sudo yum install devtoolset-7
+# fi
 
-# verify gcc 
+# gcc version 7.3.1 20180303 (Red Hat 7.3.1-5) (GCC)
 source scl_source enable devtoolset-7
-gcc --version
 
 # sets the build dir 
 BUILD_ROOT=~/sf-package-build 
@@ -88,7 +86,8 @@ DOWNLOAD_DIR=${BUILD_ROOT}/download
 mkdir -vp ${BUILD_ROOT} ${SOURCE_DIR} ${DOWNLOAD_DIR} ${INSTALL_PATH}
 
 # sets the install path
-INSTALL_PATH=/opt/sf-package
+#INSTALL_PATH=/opt/sf-package
+INSTALL_PATH=~/sf-package
 
 sudo mkdir -v ${INSTALL_PATH}
 cd ${DOWNLOAD_DIR}
@@ -96,25 +95,18 @@ cd ${DOWNLOAD_DIR}
 #############################################################
 ### Downloads
 #############################################################
-##wget https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2.tar.gz
 wget https://github.com/Kitware/CMake/releases/download/v3.27.6/cmake-3.27.6.tar.gz
-##wget https://github.com/OSGeo/gdal/releases/download/v3.5.0/gdal-3.5.0.tar.gz
 wget https://github.com/OSGeo/gdal/releases/download/v3.7.2/gdal-3.7.2.tar.gz
-#geos
 curl -O https://download.osgeo.org/geos/geos-3.12.0.tar.bz2
-##wget https://download.osgeo.org/proj/proj-9.0.0.tar.gz
 curl -O https://download.osgeo.org/proj/proj-9.3.0.tar.gz
-# wget https://download.osgeo.org/proj/proj-data-1.9.tar.gz # local proj data
-curl -O https://download.osgeo.org/proj/proj-data-1.15.tar.gz
-#wget https://sqlite.org/2022/sqlite-autoconf-3380500.tar.gz
+#proj data if needed
+#curl -O https://download.osgeo.org/proj/proj-data-1.15.tar.gz
 curl -O https://sqlite.org/2023/sqlite-autoconf-3430100.tar.gz
-# wget https://cran.r-project.org/src/contrib/sf_1.0-7.tar.gz
 wget https://cran.r-project.org/src/contrib/sf_1.0-14.tar.gz
 
 #############################################################
 ### cmake https://cmake.org/
 #############################################################
-#CMAKE_VER="cmake-3.23.2"
 CMAKE_VER="cmake-3.27.6"
 CMAKE_PREFIX=${INSTALL_PATH}/${CMAKE_VER}
 tar -C ${SOURCE_DIR} -xvzf ${DOWNLOAD_DIR}/${CMAKE_VER}.tar.gz  && cd ${SOURCE_DIR}/cmake-*
@@ -178,13 +170,9 @@ export PATH=${GEOS_PREFIX}/bin:$PATH
 #############################################################
 ### sf https://github.com/r-spatial/sf
 #############################################################
-# /opt/R/4.0.2/bin/R
-# R > install.packages("sf", configure.args = c("--with-gdal-config=/opt/sf-package/gdal-3.7.2/bin/gdal-config", "--with-geos-config=/opt/sf-package/geos-3.12.0/bin/geos-config", "--with-proj-data=/opt/sf-package/proj-9.3.0/share/proj/", "--with-sqlite3-lib=/opt/sf-package/sqlite-3.43.1/lib/", "--with-proj-include=/opt/sf-package/proj-9.3.0/include/", "--with-proj-lib=/opt/sf-package/proj-9.3.0/lib64/", "--with-proj-share=/opt/sf-package/proj-9.3.0/share/"))
-
-install.packages("sf", configure.args = c("--with-gdal-config=/opt/sf-package/gdal-3.7.2/bin/gdal-config", "--with-geos-config=/opt/sf-package/geos-3.12.0/bin/geos-config", "--with-proj-data=/opt/sf-package/proj-9.3.0/share/proj/", "--with-sqlite3-lib=/opt/sf-package/sqlite-3.43.1/lib/", "--with-proj-include=/opt/sf-package/proj-9.3.0/include/", "--with-proj-lib=/opt/sf-package/proj-9.3.0/lib64/", "--with-proj-share=/opt/sf-package/proj-9.3.0/share/"))
-
-# R > library(sf)
-# Linking to GEOS 3.4.2, GDAL 3.5.0, PROJ 9.0.0; sf_use_s2() is TRUE
+#/opt/R/4.0.2/bin/R
+# install.packages("sf", configure.args = c("--with-gdal-config=/opt/sf-package/gdal-3.7.2/bin/gdal-config", "--with-geos-config=/opt/sf-package/geos-3.12.0/bin/geos-config", "--with-proj-data=/opt/sf-package/proj-9.3.0/share/proj/", "--with-sqlite3-lib=/opt/sf-package/sqlite-3.43.1/lib/", "--with-proj-include=/opt/sf-package/proj-9.3.0/include/", "--with-proj-lib=/opt/sf-package/proj-9.3.0/lib64/", "--with-proj-share=/opt/sf-package/proj-9.3.0/share/"))
+# library(sf)
 
 #############################################################
 ### Build Notes
