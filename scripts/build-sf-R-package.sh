@@ -1,4 +1,4 @@
-# build-df-R-package.sh v1.1
+#### build-sf-R-package.sh v1.1
 # Build and install the "Simple Features for R" package
 # (https://github.com/r-spatial/sf) and dependencies from source
 # 
