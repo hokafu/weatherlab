@@ -253,9 +253,27 @@ EOF
 # now this works
 install.packages("sf", configure.args = c("--with-proj-lib=/opt/sf-package/proj-9.3.0/lib64/","--with-sqlite3-lib=/opt/sf-package/sqlite-3.43.1/lib/"))
 
+##### output
+# checking GDAL: linking with --libs only... yes
+# checking GDAL: /opt/sf-package/gdal-3.7.2/share/gdal/pcs.csv readable... no
+# checking GDAL: checking whether PROJ is available for linking:... yes
+# checking GDAL: checking whether PROJ is available for running:... yes
+# configure: GDAL: 3.7.2
+# configure: pkg-config proj exists, will use it
+# configure: using proj.h.
+# checking PROJ: checking whether PROJ and sqlite3 are available for linking:... yes
+# checking for geos-config... /opt/sf-package/geos-3.12.0/bin/geos-config
+# checking geos-config usability... yes
+# configure: GEOS: 3.12.0
+# checking GEOS version >= 3.4.0... yes
+# checking for geos_c.h... yes
+# checking geos: linking with -L/opt/sf-package/geos-3.12.0/lib64 -lgeos_c... yes
+##### output
+
 #but this still doesn't with the error below!
 install.packages("sf")
 
+##### output
 # configure: GDAL: 3.7.2
 # configure: pkg-config proj exists, will use it
 # configure: using proj.h.
@@ -263,6 +281,7 @@ install.packages("sf")
 # checking PROJ: checking whether PROJ and sqlite3 are available for linking:... no
 # configure: error: libproj or sqlite3 not found in standard or given locations.
 # ERROR: configuration failed for package ‘sf’
+##### output
 
 # SySys.getenv("PKG_CONFIG_PATH")
 # [1] "/opt/sf-package/sqlite-3.43.1/lib/pkgconfig:/opt/sf-package/proj-9.3.0/lib64/pkgconfig:/opt/sf-package/gdal-3.7.2/lib64/pkgconfig:/opt/sf-package/geos-3.12.0/lib64/pkgconfig"
