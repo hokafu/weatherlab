@@ -81,26 +81,26 @@ source scl_source enable devtoolset-7
 # sets the build dir
 BUILD_ROOT=/data/sf-build
 
-#keep track of env vars
-SFVARS=$BUILD_ROOT/sf-build-vars-$RANDOM.txt
-echo \# $(date) > $SFVARS
-
 SOURCE_DIR=${BUILD_ROOT}/source
 DOWNLOAD_DIR=${BUILD_ROOT}/download
 mkdir -vp ${BUILD_ROOT} ${SOURCE_DIR} ${DOWNLOAD_DIR}
+
+#keep track of env vars
+SFVARS=$BUILD_ROOT/sf-build-vars-$RANDOM.txt
+echo \# $(date) > $SFVARS
 
 # sets the install path
 #INSTALL_PATH=/opt/sf-package
 INSTALL_PATH=/opt/sf-package
 
 sudo mkdir -v ${INSTALL_PATH}
-cd ${DOWNLOAD_DIR}
 
 echo "BUILD_ROOT=/data/sf-build" >> $SFVARS
 echo "SOURCE_DIR=${BUILD_ROOT}/source" >> $SFVARS
 echo "DOWNLOAD_DIR=${BUILD_ROOT}/download" >> $SFVARS
 echo "INSTALL_PATH=/opt/sf-package" >> $SFVARS
 
+cd ${DOWNLOAD_DIR}
 #############################################################
 ### Downloads
 #############################################################
@@ -111,7 +111,7 @@ curl -O https://download.osgeo.org/proj/proj-9.3.0.tar.gz
 #proj data if needed
 # curl -O https://download.osgeo.org/proj/proj-data-1.15.tar.gz
 curl -O https://sqlite.org/2023/sqlite-autoconf-3430100.tar.gz
-wget --no-proxy https://sqlite.org/2023/sqlite-autoconf-3430100.tar.gz
+#wget --no-proxy https://sqlite.org/2023/sqlite-autoconf-3430100.tar.gz
 wget https://cran.r-project.org/src/contrib/sf_1.0-14.tar.gz
 
 #############################################################
@@ -188,6 +188,9 @@ GDAL_PREFIX=${INSTALL_PATH}/${GDAL_VER}
 tar -C ${SOURCE_DIR} -xvzf ${DOWNLOAD_DIR}/gdal-3.7.2.tar.gz  && cd ${SOURCE_DIR}/gdal-*
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE="Release" -DCMAKE_PREFIX_PATH="${SQLITE_PREFIX};${PROJ_PREFIX}" -DCMAKE_INSTALL_PREFIX="${GDAL_PREFIX}" ..
+
+#or specify sqlite using options
+cmake -DCMAKE_BUILD_TYPE="Release" -DCMAKE_PREFIX_PATH="${PROJ_PREFIX}" -DSQLite3_LIBRARY=/opt/sf-package/sqlite-3.43.1/lib/libsqlite3.so -DSQLite3_INCLUDE_DIR=/opt/sf-package/sqlite-3.43.1/include -DCMAKE_INSTALL_PREFIX="${GDAL_PREFIX}" ..
 
 #cmake -DCMAKE_BUILD_TYPE="Release" -DCMAKE_PREFIX_PATH="${PROJ_PREFIX}" -DCMAKE_INSTALL_PREFIX="${GDAL_PREFIX}" ..
 #cmake -DCMAKE_PREFIX_PATH="${PROJ_PREFIX}" -DCMAKE_INSTALL_PREFIX="${GDAL_PREFIX}" ..
