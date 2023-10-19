@@ -1,4 +1,4 @@
-#### build-sf-R-package.sh v1.4
+#### build-sf-R-package.sh v1.5
 # Build and install the "Simple Features for R" package
 # (https://github.com/r-spatial/sf) and dependencies from source
 #
@@ -156,10 +156,13 @@ PROJ_PREFIX=${INSTALL_PATH}/${PROJ_VER}
 tar -C ${SOURCE_DIR} -xvzf ${DOWNLOAD_DIR}/proj-9.3.0.tar.gz  && cd ${SOURCE_DIR}/proj-*
 mkdir build && cd build
 cmake -DCMAKE_PREFIX_PATH="${SQLITE_PREFIX}" -DCMAKE_INSTALL_PREFIX="${PROJ_PREFIX}" ..
+
+# alternate way to specify sqlite3 include/libs, need to test without sqlite3 symlinks in /usr/local
+#cmake -DSQLITE3_INCLUDE_DIR=${SQLITE_PREFIX}/include -DSQLITE3_LIBRARY=${SQLITE_PREFIX}/lib/libsqlite3.so  -DCMAKE_INSTALL_PREFIX="${PROJ_PREFIX}" ..
 cmake --build .
 sudo cmake --build . --target install
 export PATH=${PROJ_PREFIX}/bin:$PATH
-proj --version
+proj
 
 echo PROJ_VER="proj-9.3.0" >> $SFVARS
 echo "PROJ_PREFIX=${INSTALL_PATH}/${PROJ_VER}" >> $SFVARS
@@ -188,10 +191,11 @@ GDAL_VER="gdal-3.7.2"
 GDAL_PREFIX=${INSTALL_PATH}/${GDAL_VER}
 tar -C ${SOURCE_DIR} -xvzf ${DOWNLOAD_DIR}/gdal-3.7.2.tar.gz  && cd ${SOURCE_DIR}/gdal-*
 mkdir build && cd build
-cmake -DCMAKE_BUILD_TYPE="Release" -DCMAKE_PREFIX_PATH="${SQLITE_PREFIX};${PROJ_PREFIX}" -DCMAKE_INSTALL_PREFIX="${GDAL_PREFIX}" ..
 
-#or specify sqlite using options
-cmake -DCMAKE_BUILD_TYPE="Release" -DCMAKE_PREFIX_PATH="${PROJ_PREFIX}" -DSQLite3_LIBRARY=/opt/sf-package/sqlite-3.43.1/lib/libsqlite3.so -DSQLite3_INCLUDE_DIR=/opt/sf-package/sqlite-3.43.1/include -DCMAKE_INSTALL_PREFIX="${GDAL_PREFIX}" ..
+#cmake -DCMAKE_BUILD_TYPE="Release" -DCMAKE_PREFIX_PATH="${SQLITE_PREFIX};${PROJ_PREFIX}" -DCMAKE_INSTALL_PREFIX="${GDAL_PREFIX}" ..
+
+# alternate way to specify sqlite3 include/libs, need to test without sqlite3 symlinks in /usr/local
+cmake -DCMAKE_BUILD_TYPE="Release" -DCMAKE_PREFIX_PATH="${PROJ_PREFIX}" -DSQLite3_LIBRARY=${SQLITE_PREFIX}/lib/libsqlite3.so -DSQLite3_INCLUDE_DIR=${SQLITE_PREFIX}/include -DCMAKE_INSTALL_PREFIX="${GDAL_PREFIX}" ..
 
 #cmake -DCMAKE_BUILD_TYPE="Release" -DCMAKE_PREFIX_PATH="${PROJ_PREFIX}" -DCMAKE_INSTALL_PREFIX="${GDAL_PREFIX}" ..
 #cmake -DCMAKE_PREFIX_PATH="${PROJ_PREFIX}" -DCMAKE_INSTALL_PREFIX="${GDAL_PREFIX}" ..
@@ -220,6 +224,8 @@ echo PATH=${GDAL_PREFIX}/bin:$PATH >> $SFVARS
 #    Enable SQLite3 support (used by SQLite/Spatialite, GPKG, Rasterlite, MBTiles, etc.)
 #  * GEOS
 #    Geometry Engine - Open Source (GDAL core dependency)
+
+exit
 
 #############################################################
 ################## PACKAGE INSTALL SECTION ##################
