@@ -1,4 +1,4 @@
-#### build-sf-R-package.sh v1.5
+#### build-sf-R-package.sh v1.7
 # Build and install the "Simple Features for R" package
 # (https://github.com/r-spatial/sf) and dependencies from source
 #
@@ -110,9 +110,9 @@ curl -O https://download.osgeo.org/geos/geos-3.12.0.tar.bz2
 curl -O https://download.osgeo.org/proj/proj-9.3.0.tar.gz
 #proj data if needed
 # curl -O https://download.osgeo.org/proj/proj-data-1.15.tar.gz
-curl -O https://sqlite.org/2023/sqlite-autoconf-3430100.tar.gz
+#curl -O https://sqlite.org/2023/sqlite-autoconf-3430100.tar.gz
 # if curl fails above
-#wget --no-proxy https://sqlite.org/2023/sqlite-autoconf-3430100.tar.gz
+wget --no-proxy https://sqlite.org/2023/sqlite-autoconf-3430100.tar.gz
 wget https://cran.r-project.org/src/contrib/sf_1.0-14.tar.gz
 
 #############################################################
@@ -137,7 +137,7 @@ echo PATH="$PATH" >> $SFVARS
 SQLITE_VER="sqlite-3.43.1"
 SQLITE_PREFIX=${INSTALL_PATH}/${SQLITE_VER}
 tar -C ${SOURCE_DIR} -xvzf ${DOWNLOAD_DIR}/sqlite-autoconf-3430100.tar.gz  && cd ${SOURCE_DIR}/sqlite-autoconf-*
-CFLAGS="-DSQLITE_ENABLE_COLUMN_METADATA=1"
+export CFLAGS="-DSQLITE_ENABLE_COLUMN_METADATA=1"
 ./configure --prefix=${SQLITE_PREFIX}
 make
 sudo make install
