@@ -1,4 +1,4 @@
-#### build-sf-R-package.sh v1.2
+#### build-sf-R-package.sh v1.3
 # Build and install the "Simple Features for R" package
 # (https://github.com/r-spatial/sf) and dependencies from source
 #
@@ -82,7 +82,7 @@ source scl_source enable devtoolset-7
 BUILD_ROOT=/data/sf-build
 
 #keep track of env vars
-SFVARS=$BUILD_ROOT/sf-build-vars
+SFVARS=$BUILD_ROOT/sf-build-vars-$RANDOM.txt
 echo \# $(date) > $SFVARS
 
 SOURCE_DIR=${BUILD_ROOT}/source
@@ -109,7 +109,7 @@ wget https://github.com/OSGeo/gdal/releases/download/v3.7.2/gdal-3.7.2.tar.gz
 curl -O https://download.osgeo.org/geos/geos-3.12.0.tar.bz2
 curl -O https://download.osgeo.org/proj/proj-9.3.0.tar.gz
 #proj data if needed
-curl -O https://download.osgeo.org/proj/proj-data-1.15.tar.gz
+# curl -O https://download.osgeo.org/proj/proj-data-1.15.tar.gz
 curl -O https://sqlite.org/2023/sqlite-autoconf-3430100.tar.gz
 wget --no-proxy https://sqlite.org/2023/sqlite-autoconf-3430100.tar.gz
 wget https://cran.r-project.org/src/contrib/sf_1.0-14.tar.gz
@@ -217,6 +217,9 @@ echo PATH=${GDAL_PREFIX}/bin:$PATH >> $SFVARS
 #  * GEOS
 #    Geometry Engine - Open Source (GDAL core dependency)
 
+#############################################################
+################## PACKAGE INSTALL SECTION ##################
+#############################################################
 
 #############################################################
 ### sf https://github.com/r-spatial/sf
@@ -322,8 +325,10 @@ install.packages("sf")
 # drwxr-xr-x. 3 root root 135 Oct 17 17:39 ..
 # -rw-r--r--. 1 root root 305 Oct 17 17:39 sqlite3.pc
 
-# to resolve this should not be needed with the pkg config in Rprofile.site
+# to resolve this should not be nedded but seems sf doesnt use pkgconfig for sqlite3
 sudo ln -s /opt/sf-package/sqlite-3.43.1/lib/* /usr/local/lib/
+
+#shouldn't need this since pkconfig works for proj
 sudo ln -s /opt/sf-package/proj-9.3.0/lib64/* /usr/local/lib64/
 
 #now this works after setting the symlinks; but why isnt the Rprofile.site pkgconfig sufficient!!!!
