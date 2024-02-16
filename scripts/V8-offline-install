@@ -40,8 +40,8 @@
 #############################################################
 # change the version as needed
 wget https://cran.r-project.org/src/contrib/V8_4.2.2.tar.gz
-
-# Copy and run this on the "offline" machine where R is installed! 
+wget http://jeroen.github.io/V8/get-v8-linux.shx.sh
+# Copy and run get-v8-linux.sh on the "offline" machine where R is installed! 
 # It will fail to download but show the correct lib package, such as
 # URL=https://github.com/jeroen/V8/releases/download/
 bash -x get-v8-linux.sh | less
