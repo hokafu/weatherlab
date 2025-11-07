@@ -89,17 +89,13 @@ dnf install libheif  libheif libheif
 # Notes
 You'll need to include the paths to the shared libraries in your R LD_LIBRARY_PATH (e.g.,  /opt/software/ImageMagick-7.1.2-7/lib:/opt/software/libde265/lib:/opt/software/x265/lib:/opt/software/libheif/lib64/").
 
-Then in R session ...
+Then compile magick R package in an R session ...
 
 > Sys.getenv("LD_LIBRARY_PATH")
 [1] "/opt/R/4.4.3/lib/R/lib:/usr/local/lib:/usr/lib/jvm/jre-11-openjdk/lib/server:/opt/software/ImageMagick-7.1.2-7/lib::/opt/software/ImageMagick-7.1.2-7/lib:/opt/software/libde265/lib:/opt/software/x265/lib:/opt/software/libheif/lib64/"
-> options(repos = c(CRAN = "https://p3m.dev/cran/latest"))
-> install.packages("magick", qu)
-quiet=           quakes           quarters         quarters.POSIXt  quartz.options   quartzFont       quasi            quasipoisson     qunif            
-quade.test       quantile         quarters.Date    quartz           quartz.save      quartzFonts      quasibinomial    quit             quote            
-> install.packages("magick", qui)
-quiet=  quit    
-> install.packages("magick", quiet=TRUE)
+> Sys.getenv("PKG_CONFIG_PATH")
+[1] "/opt/software/ImageMagick-7.1.2-7/lib/pkgconfig"
+> options(repos = c(CRAN = "https://cran.rstudio.com"))
 > library(magick)
 Linking to ImageMagick 7.1.2.8
 Enabled features: cairo, fontconfig, freetype, fftw, heic, lcms, raw, rsvg, x11
