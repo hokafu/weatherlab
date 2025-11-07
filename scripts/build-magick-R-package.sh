@@ -27,6 +27,10 @@
 # 
 #############################################################
 
+# Build system/compiler
+# Red Hat Enterprise Linux 9.4 (Plow)
+# gcc version 11.5.0 20240719 (Red Hat 11.5.0-5) (GCC) 
+
 # The install prefix path is /opt/software, change to suit your path.
 
 # create a working directory
