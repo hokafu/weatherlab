@@ -84,10 +84,11 @@ make
 sudo make install
 
 #reinstall OS libheif
-dnf install libheif  libheif libheif
+dnf install libheif libheif-devel libheif-tools
 
 # Notes
-You'll need to include the paths to the shared libraries in your R LD_LIBRARY_PATH (e.g.,  /opt/software/ImageMagick-7.1.2-7/lib:/opt/software/libde265/lib:/opt/software/x265/lib:/opt/software/libheif/lib64/").
+You'll need to include the paths to the shared libraries in your LD_LIBRARY_PATH...
+LD_LIBRARY_PATH=/opt/software/ImageMagick-7.1.2-7/lib:/opt/software/libde265/lib:/opt/software/x265/lib:/opt/software/libheif/lib64
 
 Then compile magick R package in an R session ...
 
