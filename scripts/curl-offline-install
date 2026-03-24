@@ -1,0 +1,87 @@
+#############################################################
+# Install the curl R package (https://github.com/jeroen/curl) 
+# in an "offline" environment.
+#############################################################
+
+#############################################################
+# Disclaimer
+#############################################################
+#
+# This is provided as-is without support and may not work due to
+# differences on your system.
+#
+# No liability for the contents of this documents can be accepted. Use
+# the concepts, examples and other content at your own risk. There may
+# be errors and inaccuracies, that may of course be damaging to your
+# system. Although this is highly unlikely, you should proceed with
+# caution. The author does not accept any responsibility for any
+# damage incurred.
+#
+# All copyrights are held by their respective owners, unless
+# specifically noted otherwise. Use of a term in this document should
+# not be regarded as affecting the validity of any trademark or
+# service mark.
+#
+# Naming of particular products or brands should not be seen as
+# endorsements.
+# 
+#############################################################
+
+#############################################################
+# README
+#############################################################
+# A server with internet access is used to obtain required
+# the packages and helper scripts, which are copied over an
+# offline server. This is "process" not a script since 
+# commands need to run on different hosts.
+
+#############################################################
+# From a server with internet access
+#############################################################
+# change the version as needed
+wget https://cran.r-project.org/src/contrib/curl_7.0.0.tar.gz
+wget https://github.com/jeroen/curl/releases/download/libcurl-8.14.1/get-curl-linux.sh
+
+# Copy and run get-curl-linux.sh on the "offline" machine where R is installed! 
+# It will fail to download but show the correct libcurl package, such as
+# Getting https://github.com/jeroen/curl/releases/download/libcurl-8.14.1/libcurl-8.14.1-x86_64-rocky8-minimal.tar.gz
+bash -x ./get-curl-linux.sh | less # ctrl-c to exit
+
+# Download libcurl on the "online" server (change the package URL below to the one specified URL above)
+wget https://github.com/jeroen/curl/releases/download/libcurl-8.14.1/libcurl-8.14.1-x86_64-rocky8-minimal.tar.gz -O bundle.tar.gz
+
+#############################################################
+# on the "offline" server
+#############################################################
+mkdir /tmp/buildcurl
+cd /tmp/buildcurl
+# rsync/copy curl_7.0.0.tar.gz and bundle.tar.gz to /tmp/buildcurl
+# ls /tmp/buildcurl/ #has bundle.tar.gz curl_7.0.0.tar.gz get-curl-linux.sh
+
+cd /tmp/buildcurl/
+mkdir -p .deps
+tar xf bundle.tar.gz -C .deps
+rm -f bundle.tar.gz
+
+# override the package LIBS and CFLAGS
+if [ -f "${PWD}/.deps/lib/libcurl.a" ]; then
+  export PKG_CFLAGS="-I${PWD}/.deps/include"
+  export PKG_LIBS="${PWD}/.deps/lib/libcurl.a $LIBS"
+fi
+echo $PKG_CFLAGS
+echo $PKG_LIBS
+
+#extract curl R package 
+tar -xvzf  curl_7.0.0.tar.gz 
+
+# install to R, adding any missing package dependencies (Rcpp,jsonlite,etc.)
+export R_VERSION=4.4.0
+sudo /opt/R/${R_VERSION}/bin/R CMD INSTALL curl
+
+# confirm it loads
+# /opt/R/${R_VERSION}/bin/R
+# R > library(curl)
+
+# or if there is a newer libcurl that has pkgconfig
+Sys.setenv(PKG_CONFIG_PATH="/path/to/curl/lib/pkgconfig")
+install.packages("curl", type = "source")
